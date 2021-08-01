@@ -1,15 +1,12 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState, AppThunk } from '../../app/store'
 import { fetchCount } from './counterAPI'
+import { CounterState, counterStatus } from './types'
 
-export interface CounterState {
-  value: number
-  status: 'idle' | 'loading' | 'failed'
-}
-
-const initialState: CounterState = {
+export const initialState: CounterState = {
   value: 0,
-  status: 'idle'
+  status: counterStatus.idle,
+  error: ''
 }
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -17,14 +14,29 @@ const initialState: CounterState = {
 // will call the thunk with the `dispatch` function as the first argument. Async
 // code can then be executed and other actions can be dispatched. Thunks are
 // typically used to make async requests.
-export const incrementAsync = createAsyncThunk(
-  'counter/fetchCount',
-  async (amount: number) => {
-    const response = await fetchCount(amount)
+
+/**
+ * Asunc increment action creator
+ * @param {number} amount - new amount
+ * @fulfilled {number} - returned amount
+ * @rejected {string} - Error message
+ *
+ */
+export const incrementAsync = createAsyncThunk<
+  number,
+  number,
+  {
+    rejectValue: string
+  }
+>('counter/fetchCount', async (amount, { rejectWithValue }) => {
+  const response = await fetchCount(amount)
+  if (response.data !== 5) {
     // The value we return becomes the `fulfilled` action payload
     return response.data
+  } else {
+    return rejectWithValue('Validation error! Response data was 5!')
   }
-)
+})
 
 export const counterSlice = createSlice({
   name: 'counter',
@@ -51,11 +63,23 @@ export const counterSlice = createSlice({
   extraReducers: builder => {
     builder
       .addCase(incrementAsync.pending, state => {
-        state.status = 'loading'
+        state.status = counterStatus.pending
+        state.error = ''
       })
       .addCase(incrementAsync.fulfilled, (state, action) => {
-        state.status = 'idle'
+        state.status = counterStatus.idle
         state.value += action.payload
+        state.error = ''
+      })
+      // some error occurred while loading repository content
+      .addCase(incrementAsync.rejected, (state, action) => {
+        state.status = counterStatus.failed
+        if (action.payload) {
+          // For example this could be validation error handling
+          state.error = action?.payload
+        } else {
+          state.error = action.error.message
+        }
       })
   }
 })

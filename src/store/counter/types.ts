@@ -1,6 +1,6 @@
 export enum counterStatus {
   idle = 'idle',
-  loading = 'pending',
+  pending = 'pending',
   failed = 'failed'
 }
 
@@ -10,8 +10,10 @@ export enum counterStatus {
  * @type {object}
  * @property {number} value -  current counter value
  * @property {counterStatus} status - status of osync counter
+ * @property {string} error - error message
  */
 export interface CounterState {
   value: number
   status: counterStatus
+  error: string | null | undefined
 }
