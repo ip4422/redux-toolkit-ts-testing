@@ -9,32 +9,35 @@ export const initialState: CounterState = {
   error: ''
 }
 
-// The function below is called a thunk and allows us to perform async logic. It
-// can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
-// will call the thunk with the `dispatch` function as the first argument. Async
-// code can then be executed and other actions can be dispatched. Thunks are
-// typically used to make async requests.
-
 /**
  * Asunc increment action creator
- * @param {number} amount - new amount
+ * The function below is called a thunk and allows us to perform async logic. It
+ * can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
+ * will call the thunk with the `dispatch` function as the first argument. Async
+ * code can then be executed and other actions can be dispatched. Thunks are
+ * typically used to make async requests.
  * @fulfilled {number} - returned amount
+ * @param {number} amount - new amount
  * @rejected {string} - Error message
  *
  */
 export const incrementAsync = createAsyncThunk<
+  // Return type of the payload creator
   number,
+  // First argument to the payload creator
   number,
   {
+    // Optional fields for defining thunkApi field types
     rejectValue: string
   }
->('counter/fetchCount', async (amount, { rejectWithValue }) => {
+>('counter/fetchCount', async (amount, thunkApi) => {
   const response = await fetchCount(amount)
   if (response.data !== 5) {
     // The value we return becomes the `fulfilled` action payload
     return response.data
   } else {
-    return rejectWithValue('Validation error! Response data was 5!')
+    // For example we can return validation result here
+    return thunkApi.rejectWithValue('Validation error! Response data was 5!')
   }
 })
 

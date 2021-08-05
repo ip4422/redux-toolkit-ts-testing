@@ -64,9 +64,11 @@ describe('counter reducer async actions', () => {
     })
   })
 
-
   it('should set status to "failed"', async () => {
-    const action = { type: incrementAsync.rejected.type, payload: 'loading error' }
+    const action = {
+      type: incrementAsync.rejected.type,
+      payload: 'loading error'
+    }
     const state = counterReducer(initialState, action)
     expect(state).toEqual({
       ...initialState,
@@ -74,5 +76,4 @@ describe('counter reducer async actions', () => {
       status: counterStatus.failed
     })
   })
-
 })
