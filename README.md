@@ -1,3 +1,3 @@
-Application for understanding how to use Redux Toolkit with TypeScript and React Testing Library.
+Application for understanding how to test Redux Toolkit with TypeScript.
 
-Based on the Redux Toolkit example.
+Based on the Redux Toolkit + TypeScript example.
